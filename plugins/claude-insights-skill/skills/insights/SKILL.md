@@ -26,7 +26,9 @@ Parse the number from the argument. If no argument, analyze all available sessio
 
 Scripts are compiled in `${CLAUDE_PLUGIN_DATA}` (auto-installed via SessionStart hook).
 Prompts are at `${CLAUDE_PLUGIN_ROOT}/prompts/`.
-Output goes to `${CLAUDE_PLUGIN_DATA}/output/`.
+All output goes to `./insights-report/` in the current working directory (no writes to `~/.claude/`).
+
+First, ensure the working directory exists: `mkdir -p ./insights-report/cache/session-meta ./insights-report/cache/facets`
 
 ### Step 0: Determine Filters
 
@@ -45,8 +47,8 @@ node "${CLAUDE_PLUGIN_DATA}/scripts/dist/scan-sessions.js" \
   --project "{ProjectName}" \
   [--days {N}] \
   --max 200 \
-  --cache-dir "${CLAUDE_PLUGIN_DATA}/output/cache/session-meta" \
-  --output "${CLAUDE_PLUGIN_DATA}/output/{filename}_metas.json"
+  --cache-dir "./insights-report/cache/session-meta" \
+  --output "./insights-report/{filename}_metas.json"
 ```
 
 Read the output to check how many sessions were found. If 0, inform the user and stop.
@@ -55,17 +57,17 @@ Read the output to check how many sessions were found. If 0, inform the user and
 
 For sessions that need qualitative analysis:
 
-1. Read `${CLAUDE_PLUGIN_DATA}/output/{filename}_metas.json` to get the session list
+1. Read `./insights-report/{filename}_metas.json` to get the session list
 2. For each session (up to 30, most recent first):
-   a. Check if cached facet exists at `${CLAUDE_PLUGIN_DATA}/output/cache/facets/{session_id}.json`
+   a. Check if cached facet exists at `./insights-report/cache/facets/{session_id}.json`
    b. If not cached, read the session `.jsonl` file
       - The actual file is at `~/.claude/projects/{project_path}/{session_id}.jsonl`
    c. Use the **Agent tool** (`subagent_type: "general-purpose"`) to spawn a sub-agent. Provide it:
       - The session transcript (user messages + assistant tool calls, truncated to 30k chars)
       - The facet extraction prompt from `${CLAUDE_PLUGIN_ROOT}/prompts/facet-extraction.md`
       - Instruction to return ONLY a valid JSON object
-   d. Parse the sub-agent's JSON response → save to `${CLAUDE_PLUGIN_DATA}/output/cache/facets/{session_id}.json`
-3. Collect all facets into `${CLAUDE_PLUGIN_DATA}/output/{filename}_facets.json` (JSON array)
+   d. Parse the sub-agent's JSON response → save to `./insights-report/cache/facets/{session_id}.json`
+3. Collect all facets into `./insights-report/{filename}_facets.json` (JSON array)
 
 **Parallelism**: Use the Agent tool to spawn up to 5 sub-agents concurrently (multiple Agent tool calls in a single message).
 
@@ -73,14 +75,14 @@ For sessions that need qualitative analysis:
 
 ```bash
 node "${CLAUDE_PLUGIN_DATA}/scripts/dist/aggregate.js" \
-  --metas "${CLAUDE_PLUGIN_DATA}/output/{filename}_metas.json" \
-  --facets "${CLAUDE_PLUGIN_DATA}/output/{filename}_facets.json" \
-  --output "${CLAUDE_PLUGIN_DATA}/output/{filename}_aggregated.json"
+  --metas "./insights-report/{filename}_metas.json" \
+  --facets "./insights-report/{filename}_facets.json" \
+  --output "./insights-report/{filename}_aggregated.json"
 ```
 
 ### Phase 4: Generate Insights (sub-agents)
 
-Read `${CLAUDE_PLUGIN_DATA}/output/{filename}_aggregated.json` and `${CLAUDE_PLUGIN_DATA}/output/{filename}_facets.json`.
+Read `./insights-report/{filename}_aggregated.json` and `./insights-report/{filename}_facets.json`.
 
 Build a data context string with: aggregated stats, up to 50 session summaries, up to 20 friction details.
 
@@ -95,22 +97,23 @@ Use the **Agent tool** (`subagent_type: "general-purpose"`) to spawn **parallel 
 
 After all complete, generate `at_a_glance` (needs all other sections' results).
 
-Save to `${CLAUDE_PLUGIN_DATA}/output/{filename}_insights.json`.
+Save to `./insights-report/{filename}_insights.json`.
 
 ### Phase 5: Render Report (script)
 
 ```bash
 node "${CLAUDE_PLUGIN_DATA}/scripts/dist/render-html.js" \
-  --data "${CLAUDE_PLUGIN_DATA}/output/{filename}_aggregated.json" \
-  --insights "${CLAUDE_PLUGIN_DATA}/output/{filename}_insights.json" \
-  --output "${CLAUDE_PLUGIN_DATA}/output/reports/{filename}.html"
+  --data "./insights-report/{filename}_aggregated.json" \
+  --insights "./insights-report/{filename}_insights.json" \
+  --output "./insights-report/{filename}.html"
 ```
 
 ### Phase 6: Present Results
 
-1. Open: `open "${CLAUDE_PLUGIN_DATA}/output/reports/{filename}.html"`
+1. Open: `open "./insights-report/{filename}.html"`
 2. Show summary:
    - Project name, time range, session count
    - At a Glance highlights
    - Path to HTML report
-   - Mention previous reports in `${CLAUDE_PLUGIN_DATA}/output/reports/` if they exist for comparison
+   - Mention previous `.html` reports in `./insights-report/` if they exist for comparison
+3. Suggest adding `insights-report/` to `.gitignore` if not already there
