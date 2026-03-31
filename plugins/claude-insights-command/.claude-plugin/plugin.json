@@ -1,6 +1,6 @@
 {
   "name": "claude-insights-command",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "description": "Cross-project Claude Code session insights — analyze usage patterns, friction points, and generate interactive HTML reports. Supports project filtering and time range.",
   "author": {
     "name": "Emil Wu"
