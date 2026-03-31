@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "diff -q \"${CLAUDE_PLUGIN_ROOT}/scripts/types.ts\" \"${CLAUDE_PLUGIN_DATA}/scripts/types.ts\" >/dev/null 2>&1 || (mkdir -p \"${CLAUDE_PLUGIN_DATA}/scripts\" && cp \"${CLAUDE_PLUGIN_ROOT}/scripts/\"*.ts \"${CLAUDE_PLUGIN_DATA}/scripts/\" && cp \"${CLAUDE_PLUGIN_ROOT}/scripts/package.json\" \"${CLAUDE_PLUGIN_DATA}/scripts/\" && cp \"${CLAUDE_PLUGIN_ROOT}/scripts/tsconfig.json\" \"${CLAUDE_PLUGIN_DATA}/scripts/\" && cp \"${CLAUDE_PLUGIN_ROOT}/scripts/package-lock.json\" \"${CLAUDE_PLUGIN_DATA}/scripts/\" 2>/dev/null && cd \"${CLAUDE_PLUGIN_DATA}/scripts\" && npm install --silent 2>/dev/null && npx tsc 2>/dev/null) || rm -f \"${CLAUDE_PLUGIN_DATA}/scripts/types.ts\""
+          }
+        ]
+      }
+    ]
+  }
+}

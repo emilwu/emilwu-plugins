@@ -1,0 +1,10 @@
+{
+  "name": "claude-insights-skill",
+  "version": "1.0.0",
+  "description": "Project-scoped Claude Code session insights — auto-detects current project, analyzes usage patterns and friction, generates interactive HTML reports. Supports time range filtering.",
+  "author": {
+    "name": "Emil Wu"
+  },
+  "license": "MIT",
+  "keywords": ["insights", "analytics", "sessions", "project-scoped", "report"]
+}

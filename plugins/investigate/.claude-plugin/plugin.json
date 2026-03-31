@@ -1,0 +1,10 @@
+{
+  "name": "investigate",
+  "version": "1.0.0",
+  "description": "Cross-repo investigation workflow — spawn parallel investigators per repo, consolidate findings, produce structured report.",
+  "author": {
+    "name": "Emil Wu"
+  },
+  "license": "MIT",
+  "keywords": ["investigation", "cross-repo", "code-review", "security-audit", "architecture"]
+}

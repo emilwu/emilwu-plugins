@@ -1,0 +1,21 @@
+{
+  "name": "claude-insights",
+  "version": "1.0.0",
+  "description": "Claude Code session insights — Skill + Sub-agent architecture",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "scan": "node dist/scripts/scan-sessions.js",
+    "aggregate": "node dist/scripts/aggregate.js",
+    "render": "node dist/scripts/render-html.js"
+  },
+  "dependencies": {
+    "diff": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/diff": "^6.0.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
+}

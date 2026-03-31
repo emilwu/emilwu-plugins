@@ -1,0 +1,29 @@
+{
+  "name": "emilwu-plugins",
+  "owner": {
+    "name": "Emil Wu"
+  },
+  "metadata": {
+    "description": "Emil Wu's Claude Code plugin collection — investigation, session insights, and more"
+  },
+  "plugins": [
+    {
+      "name": "investigate",
+      "source": "./plugins/investigate",
+      "description": "Cross-repo investigation workflow — spawn parallel investigators per repo, consolidate findings, produce structured report.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "claude-insights-command",
+      "source": "./plugins/claude-insights-command",
+      "description": "Cross-project session insights via /claude-insights-command:insights. Supports project filtering and time range.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "claude-insights-skill",
+      "source": "./plugins/claude-insights-skill",
+      "description": "Project-scoped session insights via /claude-insights-skill:insights. Auto-detects current project, supports time range.",
+      "version": "1.0.0"
+    }
+  ]
+}
